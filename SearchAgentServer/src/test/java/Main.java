@@ -1,6 +1,6 @@
-import com.chmihun.database.Google;
-import com.chmihun.searchagent.GoogleObj;
-import com.chmihun.searchagent.GoogleSearch;
+import com.chmihun.searchagent.databases.Google;
+import com.chmihun.searchagent.agents.GoogleObj;
+import com.chmihun.searchagent.agents.GoogleSearch;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class Main {
     @Test
     public void dbTest() {
         Google gDB = new Google();
-        GoogleObj obj = new GoogleObj("Test", "http://gLink", "http://sLink", gDB);
+        GoogleObj obj = new GoogleObj("Test", "http://gLink.ua/test.html", "http://sLink.ua/test.html", gDB);
         gDB.insertDataToDB(obj);
     }
 

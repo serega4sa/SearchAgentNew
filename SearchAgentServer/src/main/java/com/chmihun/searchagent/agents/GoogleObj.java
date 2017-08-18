@@ -1,7 +1,7 @@
-package com.chmihun.searchagent;
+package com.chmihun.searchagent.agents;
 
-import com.chmihun.database.Google;
-import com.chmihun.database.MySQLDB;
+import com.chmihun.searchagent.databases.Google;
+import com.chmihun.searchagent.databases.MySQLDB;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

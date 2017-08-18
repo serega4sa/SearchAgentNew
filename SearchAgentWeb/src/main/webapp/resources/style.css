@@ -1,0 +1,129 @@
+html, body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 80%;
+    height: 100%;
+    width: 100%;
+    margin: 0 !important;
+    color: black;
+}
+
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#menu {
+    display: inline-block;
+    position: static;
+    width: 10%;
+    height: 100%;
+    float: left;
+    text-align: center;
+    text-shadow: 3px 3px 5px #222;
+    background-color: cornflowerblue;
+}
+
+img {
+    margin-top: 10%;
+    width: 50%;
+}
+
+img:hover {
+    -webkit-filter: drop-shadow(5px 5px 5px #222);
+    filter:         drop-shadow(5px 5px 5px #222);
+}
+
+
+#content {
+    display: inline-block;
+    position: static;
+    width: 90%;
+    height: 100%;
+    text-align: center;
+    color: #626262;
+}
+
+#header {
+    position: static;
+    width: 85%;
+    height: 10%;
+    text-shadow: 1px 1px 2px #222;
+    color: cornflowerblue;
+}
+
+#inside {
+    position: static;
+    width: 85%;
+    margin-left: 5%;
+    text-align: left;
+    font-size: 200%;
+    color: black;
+}
+
+#searchForm {
+    display: inline-block;
+    width: 50%;
+}
+
+#progressBar {
+    position: absolute;
+    display: inline-block;
+    width: 49%;
+}
+
+#loader {
+    position: fixed;
+    bottom: 39px;
+    right: 54px;
+    border: 16px solid lightgray; /* Grey */
+    border-top: 16px solid cornflowerblue; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    visibility: hidden;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.button {
+    background-color: cornflowerblue; /* Green */
+    height: 120px;
+    width: 120px;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 100%;
+}
+
+.buttonStart {
+    position: fixed;
+    bottom: 55px;
+    right: 70px;
+    outline : 0;
+}
+
+.buttonStart:hover {
+    -webkit-filter: drop-shadow(5px 5px 5px #222);
+    filter:         drop-shadow(5px 5px 5px #222);
+}
+
+.buttonOfPage {
+    -webkit-filter: drop-shadow(5px 5px 5px #222);
+    filter:         drop-shadow(5px 5px 5px #222);
+}
+

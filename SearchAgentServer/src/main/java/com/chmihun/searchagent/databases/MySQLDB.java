@@ -1,4 +1,4 @@
-package com.chmihun.database;
+package com.chmihun.searchagent.databases;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,15 +11,28 @@ import java.util.ResourceBundle;
  */
 public abstract class MySQLDB {
     private static final Logger logger = LoggerFactory.getLogger(MySQLDB.class.getName());
-    static ResourceBundle res = ResourceBundle.getBundle("common");
-    String dbURL = res.getString("dbURL");
-    String dbName = res.getString("dbName");
+    public static ResourceBundle res = ResourceBundle.getBundle("common_en");
+    public String dbURL = res.getString("dbURL");
+    public String dbName = res.getString("dbName");
     private String dbTable;
     private String dbUser = res.getString("dbUser");
     private String dbPass = res.getString("dbPass");
+    private int lastID;
+
+    public String getDbTable() {
+        return dbTable;
+    }
 
     public void setDbTable(String dbTable) {
         this.dbTable = dbTable;
+    }
+
+    public int getLastID() {
+        return lastID;
+    }
+
+    public void setLastID(int lastID) {
+        this.lastID = lastID;
     }
 
     /** Init database: check for existence of DB and exact table inside it */
@@ -189,26 +202,4 @@ public abstract class MySQLDB {
     public abstract void insertDataToDB(Object object);
 
 /** --------------------------------------------------------------------------------------------------- */
-
-    /** Returns true, if link is already in DB */
-    public boolean isPresentInDB(String sLink) {
-        Connection conn = createConnection(dbName);
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-        try {
-            pstmt = conn.prepareStatement("SELECT COUNT(*) FROM " + dbTable + " WHERE sLink = ?");
-            pstmt.setString(1, sLink);
-            rs = pstmt.executeQuery();
-            rs.next();
-
-            return rs.getInt(1) == 1;
-        } catch (SQLException e) {
-            logger.error("Problems with query of getting value from DB. ", e);
-        } finally {
-            closeResultSet(rs);
-            closePreparedStatement(pstmt);
-            closeConn(conn);
-        }
-        return false;
-    }
 }

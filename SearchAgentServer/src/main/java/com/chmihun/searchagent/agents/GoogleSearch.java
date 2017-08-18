@@ -1,7 +1,8 @@
-package com.chmihun.searchagent;
+package com.chmihun.searchagent.agents;
 
-import com.chmihun.database.Google;
-import com.chmihun.database.MySQLDB;
+import com.chmihun.searchagent.databases.Google;
+import com.chmihun.searchagent.databases.GoogleBackup;
+import com.chmihun.searchagent.databases.MySQLDB;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -31,6 +32,7 @@ public class GoogleSearch {
     private String charset = "UTF-8";
     private String userAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
     private static ResourceBundle res = ResourceBundle.getBundle("common");
+    private static GoogleSearch googleSearchServer;
 
     private ArrayList<MySQLDB> databeses = new ArrayList<MySQLDB>();
     private ArrayList<String> listOfRequests = new ArrayList<String>();
@@ -50,22 +52,37 @@ public class GoogleSearch {
         return listOfRequests;
     }
 
+    public static GoogleSearch getGoogleSearchServer() {
+        return googleSearchServer;
+    }
+
+    public static void setGoogleSearchServer(GoogleSearch googleSearchServer) {
+        GoogleSearch.googleSearchServer = googleSearchServer;
+    }
+
     /** Replace usual exception handler with own on creation of object of class */
     public GoogleSearch() {
         Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
         {
-            @Override
             public void uncaughtException (Thread thread, Throwable e)
             {
                 handleUncaughtException (thread, e);
             }
         });
         databeses.add(new Google());
+        databeses.add(new GoogleBackup());
     }
 
     /** Method that writes all uncaught exceptions to log file */
     public void handleUncaughtException(Thread t, Throwable ex) {
         logger.error("Uncaught exception in thread: " + t.getName(), ex);
+    }
+
+    public void setvDuration(String vDuration) {
+        logger.debug("vDuration = " + vDuration);
+        if (vDuration.equals("any")) this.vDuration = "";
+        if (vDuration.equals("medium")) this.vDuration = "m";
+        if (vDuration.equals("long")) this.vDuration = "l";
     }
 
     public void setqDuration(String qDuration) {
@@ -76,13 +93,6 @@ public class GoogleSearch {
         if (qDuration.equals("week")) this.qDuration = "w";
         if (qDuration.equals("month")) this.qDuration = "m";
         if (qDuration.equals("year")) this.qDuration = "y";
-    }
-
-    public void setvDuration(String vDuration) {
-        logger.debug("vDuration = " + vDuration);
-        if (vDuration.equals("any")) this.vDuration = "";
-        if (vDuration.equals("medium")) this.vDuration = "m";
-        if (vDuration.equals("long")) this.vDuration = "l";
     }
 
     public void setLocalization(String location) {
@@ -228,6 +238,7 @@ public class GoogleSearch {
             if (urls != null) {
                 GoogleObj gObj = new GoogleObj(request, urls.get(0), urls.get(1), databeses.get(0));
                 databeses.get(0).insertDataToDB(gObj);
+                databeses.get(1).insertDataToDB(gObj);
                 counterOfFoundRes++;
             }
         }
