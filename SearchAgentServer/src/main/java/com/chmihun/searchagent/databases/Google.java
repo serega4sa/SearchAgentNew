@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Created by Sergey.Chmihun on 05/16/2017.
@@ -87,5 +88,38 @@ public class Google extends MySQLDB {
             closeConn(conn);
         }
         return false;
+    }
+
+    /** Returns results for the requesting time period **/
+    public ArrayList<String> getStatisticsForPeriod(String query, String startDate, String endDate) {
+        ArrayList<String> statList = new ArrayList<String>();
+
+        Connection conn = createConnection(dbName);
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = conn.prepareStatement("SELECT * FROM " + getDbTable() + " WHERE reqTitle=? AND pTimestamp BETWEEN ? AND ?");
+            pstmt.setString(1, query);
+            pstmt.setString(2, startDate);
+            pstmt.setString(3, endDate);
+            rs = pstmt.executeQuery();
+
+            int columnCount = rs.getMetaData().getColumnCount();
+
+            StringBuilder strBld = new StringBuilder();
+            while (rs.next()) {
+                strBld.setLength(0);
+                for (int i = 2; i <= columnCount; i++) {
+                    strBld.append(rs.getObject(i)).append(", ");
+                }
+                statList.add(strBld.toString());
+            }
+        } catch (SQLException e) {
+            logger.error("Problems with creating table. ", e);
+        } finally {
+            closeStatement(pstmt);
+            closeConn(conn);
+        }
+        return statList;
     }
 }

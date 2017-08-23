@@ -16,6 +16,7 @@ import java.io.IOException;
 @WebServlet(name = "ActionHandlerServlet", urlPatterns = {"/action"})
 public class ActionHandlerServlet extends javax.servlet.http.HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ActionHandlerServlet.class.getName());
+    private GoogleSearch gs;
 
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         JSONParser parser = new JSONParser();
@@ -32,10 +33,7 @@ public class ActionHandlerServlet extends javax.servlet.http.HttpServlet {
                 logger.debug("Incoming json: " + jsonObjectInput.toJSONString());
 
                 if (jsonObjectInput.get("action").equals("getGoogleSearchResults")) {
-                    if (GoogleSearch.getGoogleSearchServer() == null) {
-                        GoogleSearch.setGoogleSearchServer(new GoogleSearch());
-                    }
-                    GoogleSearch gs = GoogleSearch.getGoogleSearchServer();
+                    gs = GoogleSearch.getGoogleSearchServer();
                     gs.getListOfRequests().clear();
                     gs.getListOfRequests().add(jsonObjectInput.get("query").toString());
                     gs.setvDuration(jsonObjectInput.get("vDuration").toString());
@@ -46,6 +44,20 @@ public class ActionHandlerServlet extends javax.servlet.http.HttpServlet {
 
                     JSONObject jsonObjectOutput = new JSONObject();
                     jsonObjectOutput.put("result", 1);
+
+                    response.setContentType("application/json");
+                    response.getWriter().write(jsonObjectOutput.toString());
+                    logger.debug("Outgoing json: " + jsonObjectOutput.toString());
+                } else if (jsonObjectInput.get("action").equals("getStatistics")) {
+                    gs = GoogleSearch.getGoogleSearchServer();
+                    boolean isAllRight = gs.generateStatisticsForPeriod(jsonObjectInput.get("query").toString(), jsonObjectInput.get("startDate").toString(), jsonObjectInput.get("endDate").toString());
+
+                    JSONObject jsonObjectOutput = new JSONObject();
+                    if (isAllRight) {
+                        jsonObjectOutput.put("result", 1);
+                    } else {
+                        jsonObjectOutput.put("result", 0);
+                    }
 
                     response.setContentType("application/json");
                     response.getWriter().write(jsonObjectOutput.toString());

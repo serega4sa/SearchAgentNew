@@ -5,6 +5,7 @@
 <head>
     <title>Search Agent</title>
     <script src="resources/webapp.js"></script>
+    <script src="resources/showStatistics.js"></script>
     <link rel="stylesheet" type="text/css" href="resources/style.css">
     <link rel="icon" href="images/spy_icon.png">
 </head>
@@ -26,7 +27,7 @@
     </a>
     <br/><br/>
     <a href="#">
-        <img src="images/statistics_logo.png"/>
+        <img src="images/statistics_logo.png" onclick="showStatistics()"/>
     </a>
 </div>
 <div id="content">

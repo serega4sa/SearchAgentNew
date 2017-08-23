@@ -3,6 +3,10 @@ package com.chmihun.searchagent.agents;
 import com.chmihun.searchagent.databases.Google;
 import com.chmihun.searchagent.databases.GoogleBackup;
 import com.chmihun.searchagent.databases.MySQLDB;
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -16,27 +20,30 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Sergey.Chmihun on 06/27/2017.
  */
-public class GoogleSearch {
+public class GoogleSearch extends Agent implements Runnable{
     private static final Logger logger = LoggerFactory.getLogger(GoogleSearch.class.getName());
     private String charset = "UTF-8";
     private String userAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
-    private static ResourceBundle res = ResourceBundle.getBundle("common");
+    //private static ResourceBundle res = ResourceBundle.getBundle("common");
     private static GoogleSearch googleSearchServer;
 
     private ArrayList<MySQLDB> databeses = new ArrayList<MySQLDB>();
     private ArrayList<String> listOfRequests = new ArrayList<String>();
-    private ArrayList<String> whiteList;
+    //private ArrayList<String> whiteList;
     private int numberOfPages;
     private int counterOfFoundRes;
     private String qDuration;
@@ -44,8 +51,9 @@ public class GoogleSearch {
     private String localization;
     private String attribute;
     private boolean isBannedByGoogle;
-    private WebDriver driver;
-    private WebDriverWait wait;
+    //private WebDriver driver;
+    //private WebDriverWait wait;
+    private String fileOutputNameXls;
 
     /** For tests */
     public ArrayList<String> getListOfRequests() {
@@ -60,6 +68,10 @@ public class GoogleSearch {
         GoogleSearch.googleSearchServer = googleSearchServer;
     }
 
+    public String getFileOutputNameXls() {
+        return fileOutputNameXls;
+    }
+
     /** Replace usual exception handler with own on creation of object of class */
     public GoogleSearch() {
         Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
@@ -69,6 +81,7 @@ public class GoogleSearch {
                 handleUncaughtException (thread, e);
             }
         });
+        googleSearchServer = this;
         databeses.add(new Google());
         databeses.add(new GoogleBackup());
     }
@@ -106,12 +119,12 @@ public class GoogleSearch {
         this.numberOfPages = numberOfPages;
     }
 
-    public void setWhiteList(ArrayList<String> whiteList) {
+    /*public void setWhiteList(ArrayList<String> whiteList) {
         if (whiteList != null) {
             logger.debug("WhiteList size = " + whiteList.size());
         } else logger.debug("WhiteList is empty");
         this.whiteList = whiteList;
-    }
+    }*/
 
     /** This method depending on the info that user specified creates attribute*/
     public void createAttribute() {
@@ -138,7 +151,7 @@ public class GoogleSearch {
             saveLinks(item);
         }
 
-        closeBrowser();
+        //closeBrowser();
         logger.info("Operation successfully finished! Found " + counterOfFoundRes + " links");
     }
 
@@ -163,18 +176,19 @@ public class GoogleSearch {
                     isBannedByGoogle = true;
 
                     /** Google ban handler */
-                    if (e.toString().contains("Status=503")){
+                    /*if (e.toString().contains("Status=503")){
                         logger.debug("Google ban occurred. Initialized recovery mechanism");
-                        /*anInterface.setSuspended(true);
+                        *//*anInterface.setSuspended(true);
                         anInterface.getStatus().setText(res.getString("google.ban"));
-                        anInterface.getStatus().setForeground(Color.RED);*/
+                        anInterface.getStatus().setForeground(Color.RED);*//*
 
                         String urlToCaptcha = e.toString().substring(e.toString().lastIndexOf("URL") + 4);
                         bannedParser(urlToCaptcha, request);
-                    }
+                    }*/
                 }
             } else {
-                WebElement searchBar = driver.findElement(By.id("lst-ib"));
+                logger.error("Banned by Google");
+                /*WebElement searchBar = driver.findElement(By.id("lst-ib"));
                 if (!driver.getTitle().contains(request)) {
                     searchBar.clear();
                     searchBar.sendKeys(request);
@@ -187,7 +201,7 @@ public class GoogleSearch {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                bannedParser(null, request);
+                bannedParser(null, request);*/
             }
         }
     }
@@ -198,7 +212,7 @@ public class GoogleSearch {
     }
 
     /** This method parses HTML page in situation when Google ban requests and asks to enter capture. In this case uses WebDriver. User need to enter capture only once per session */
-    public void bannedParser (String urlToCaptcha, String request) {
+    /*public void bannedParser (String urlToCaptcha, String request) {
         if (!urlToCaptcha.isEmpty()) {
             logger.debug("Error URL = " + urlToCaptcha);
 
@@ -214,7 +228,7 @@ public class GoogleSearch {
 
         Elements links = null;
 
-        /** Check that search results are shown */
+        *//** Check that search results are shown *//*
         if (driver.findElements(By.id("hdtbMenus")).size() != 0) {
             String link = driver.getCurrentUrl();
             try {
@@ -223,12 +237,12 @@ public class GoogleSearch {
                 logger.error("Problems with getting links from page", e);
             }
         } else {
-            /*anInterface.getStatus().setText(res.getString("time.out"));
-            anInterface.getStatus().setForeground(Color.RED);*/
+            *//*anInterface.getStatus().setText(res.getString("time.out"));
+            anInterface.getStatus().setForeground(Color.RED);*//*
         }
 
         saveResults(links, request);
-    }
+    }*/
 
     /** This method inserts data to DB, if request is matching */
     public void saveResults(Elements links, String request) {
@@ -271,13 +285,13 @@ public class GoogleSearch {
     }
 
     /** This method checks whether link contain names of the sites that are specified in the white list and skip them */
-    public boolean checkPlayer(String url) {
+    /*public boolean checkPlayer(String url) {
         for (String item : whiteList) {
             if (url.contains(item)) return true;
         }
 
-        /** In this part program goes to every link and find all iframe elements and check if they equal to white list items. Don't work properly. I suppose there should be used multithreading. */
-        /*Elements iframes = null;
+        *//** In this part program goes to every link and find all iframe elements and check if they equal to white list items. Don't work properly. I suppose there should be used multithreading. *//*
+        *//*Elements iframes = null;
         try {
             iframes = Jsoup.connect(url).userAgent(userAgent).get().select("iframe");
         } catch (IOException e) {
@@ -293,15 +307,48 @@ public class GoogleSearch {
                     if (videoLink.contains(item)) return true;
                 }
             }
-        }*/
+        }*//*
 
         return false;
-    }
+    }*/
 
     /** This method closes browser, if he has been launched */
-    public void closeBrowser() {
+    /*public void closeBrowser() {
         if (driver != null) {
             driver.quit();
+        }
+    }*/
+
+    /** This method returns results for the requesting time period **/
+    public boolean generateStatisticsForPeriod(String query, String startDate, String endDate) {
+        ArrayList<String> stat = ((Google) databeses.get(0)).getStatisticsForPeriod(query, startDate, endDate);
+
+        try {
+            if (stat != null) {
+                Date currentDate = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd_hh-mm-ss");
+                new File(System.getProperty("user.dir") + "\\Statistics").mkdir();
+                fileOutputNameXls = System.getProperty("user.dir") + "\\Statistics\\Results_" + format.format(currentDate) + ".xls";
+                File excelFile = new File(fileOutputNameXls);
+                WritableWorkbook workbook = Workbook.createWorkbook(excelFile);
+                WritableSheet sheet = workbook.createSheet(query, 0);
+
+                Label cell = null;
+                for (int i = 0; i < stat.size(); i++) {
+                    String[] arr = stat.get(i).split(", ");
+                    for (int j = 0; j < 5; j++) {
+                        cell = new Label(j + 1, i + 1, arr[j]);
+                        sheet.addCell(cell);
+                    }
+                }
+
+                workbook.write();
+                workbook.close();
+                return true;
+            } else throw new NullPointerException("Array of results is empty. ");
+        } catch (Exception e) {
+            logger.error("Something went wrong. ", e);
+            return false;
         }
     }
 }

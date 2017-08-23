@@ -13,5 +13,10 @@
         <servlet-name>ActionHandlerServlet</servlet-name>
         <url-pattern>/action</url-pattern>
     </servlet-mapping>
+    <listener>
+        <listener-class>
+            com.chmihun.searchagent.MyServletContextListener
+        </listener-class>
+    </listener>
 
 </web-app>

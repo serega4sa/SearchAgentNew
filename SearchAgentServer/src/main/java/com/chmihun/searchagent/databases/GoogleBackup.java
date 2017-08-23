@@ -1,5 +1,6 @@
 package com.chmihun.searchagent.databases;
 
+import com.chmihun.searchagent.agents.GoogleObj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,26 @@ public class GoogleBackup extends MySQLDB {
         }
     }
 
-    public void insertDataToDB(Object object) {
+    public void insertDataToDB(Object obj) {
+        GoogleObj object = (GoogleObj) obj;
 
+        /** Cut direct domain name of pirate site from sLink */
+        String temp = object.getsLink().substring(object.getsLink().indexOf("//") + 2);
+        String sourceSite = temp.substring(0, temp.indexOf("/"));
+        if (sourceSite.contains("www.")) {
+            sourceSite = sourceSite.substring(4);
+        }
+
+        Connection conn = createConnection(dbName);
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            stmt.executeUpdate("INSERT INTO " + getDbTable() + " VALUES (" + object.getID() + ", '" + object.getTimestamp() + "', '" + object.getreqTitle() + "', '" + sourceSite + "', '" + object.getgLink() + "', '" + object.getsLink() + "');");
+        } catch (SQLException e) {
+            logger.error("Problems with inserting data into DB. ", e);
+        } finally {
+            closeStatement(stmt);
+            closeConn(conn);
+        }
     }
 }

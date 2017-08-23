@@ -45,7 +45,6 @@ img:hover {
 
 #header {
     position: static;
-    width: 85%;
     height: 10%;
     text-shadow: 1px 1px 2px #222;
     color: cornflowerblue;
@@ -53,7 +52,8 @@ img:hover {
 
 #inside {
     position: static;
-    width: 85%;
+    width: 75%;
+    height: 90%;
     margin-left: 5%;
     text-align: left;
     font-size: 200%;
@@ -63,6 +63,13 @@ img:hover {
 #searchForm {
     display: inline-block;
     width: 50%;
+}
+
+#statistics {
+    visibility: hidden;
+    margin-top: 50px;
+    text-align: center;
+    color: #4CAF50;
 }
 
 #progressBar {
