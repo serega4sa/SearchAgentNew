@@ -4,19 +4,10 @@ import com.chmihun.searchagent.databases.Google;
 import com.chmihun.searchagent.databases.GoogleBackup;
 import com.chmihun.searchagent.databases.MySQLDB;
 import jxl.Workbook;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
+import jxl.write.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Sergey.Chmihun on 06/27/2017.
@@ -38,7 +28,7 @@ public class GoogleSearch extends Agent implements Runnable{
     private static final Logger logger = LoggerFactory.getLogger(GoogleSearch.class.getName());
     private String charset = "UTF-8";
     private String userAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
-    //private static ResourceBundle res = ResourceBundle.getBundle("common");
+    private static ResourceBundle res = ResourceBundle.getBundle("common");
     private static GoogleSearch googleSearchServer;
 
     private ArrayList<MySQLDB> databeses = new ArrayList<MySQLDB>();
@@ -82,6 +72,7 @@ public class GoogleSearch extends Agent implements Runnable{
             }
         });
         googleSearchServer = this;
+        logger.debug("Google search initialized: " + googleSearchServer);
         databeses.add(new Google());
         databeses.add(new GoogleBackup());
     }
@@ -336,8 +327,13 @@ public class GoogleSearch extends Agent implements Runnable{
                 Label cell = null;
                 for (int i = 0; i < stat.size(); i++) {
                     String[] arr = stat.get(i).split(", ");
-                    for (int j = 0; j < 5; j++) {
-                        cell = new Label(j + 1, i + 1, arr[j]);
+                    for (int j = 1; j < 6; j++) {
+                        if (i == 0) {
+                            WritableCellFormat cellFormat =  new WritableCellFormat(new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD, true));
+                            cell = new Label(j, i + 1, res.getString("title.col" + j), cellFormat);
+                            sheet.addCell(cell);
+                        }
+                        cell = new Label(j, i + 2, arr[j-1]);
                         sheet.addCell(cell);
                     }
                 }
