@@ -16,7 +16,6 @@ public class GoogleBackup extends MySQLDB {
 
     public GoogleBackup() {
         setDbTable(res.getString("dbTableGoogleBackup"));
-        setLastID(getIDOfLastEntry());
         init();
     }
 
@@ -25,7 +24,7 @@ public class GoogleBackup extends MySQLDB {
         Statement stmt = null;
         try {
             stmt = conn.createStatement();
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + getDbTable() + "(id integer not null, pTimestamp text not null, reqTitle text not null, sourceSite text not null, googleLink text not null, sourceLink text not null)");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + getDbTable() + "(pTimestamp text not null, reqTitle text not null, sourceSite text not null, googleLink text not null, sourceLink text not null)");
         } catch (SQLException e) {
             logger.error("Problems with creating table. ", e);
         } finally {
@@ -48,7 +47,7 @@ public class GoogleBackup extends MySQLDB {
         Statement stmt = null;
         try {
             stmt = conn.createStatement();
-            stmt.executeUpdate("INSERT INTO " + getDbTable() + " VALUES (" + object.getID() + ", '" + object.getTimestamp() + "', '" + object.getreqTitle() + "', '" + sourceSite + "', '" + object.getgLink() + "', '" + object.getsLink() + "');");
+            stmt.executeUpdate("INSERT INTO " + getDbTable() + " VALUES ('" + object.getTimestamp() + "', '" + object.getreqTitle() + "', '" + sourceSite + "', '" + object.getgLink() + "', '" + object.getsLink() + "');");
         } catch (SQLException e) {
             logger.error("Problems with inserting data into DB. ", e);
         } finally {

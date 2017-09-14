@@ -33,7 +33,7 @@ public class ActionHandlerServlet extends javax.servlet.http.HttpServlet {
                 logger.debug("Incoming json: " + jsonObjectInput.toJSONString());
 
                 if (jsonObjectInput.get("action").equals("getGoogleSearchResults")) {
-                    gs = GoogleSearch.getGoogleSearchServer();
+                    gs = (GoogleSearch) Server.getListOfAgents().get("google");
                     gs.getListOfRequests().clear();
                     gs.getListOfRequests().add(jsonObjectInput.get("query").toString());
                     gs.setvDuration(jsonObjectInput.get("vDuration").toString());
@@ -49,7 +49,7 @@ public class ActionHandlerServlet extends javax.servlet.http.HttpServlet {
                     response.getWriter().write(jsonObjectOutput.toString());
                     logger.debug("Outgoing json: " + jsonObjectOutput.toString());
                 } else if (jsonObjectInput.get("action").equals("getStatistics")) {
-                    gs = GoogleSearch.getGoogleSearchServer();
+                    gs = (GoogleSearch) Server.getListOfAgents().get("google");
                     boolean isAllRight = gs.generateStatisticsForPeriod(jsonObjectInput.get("query").toString(), jsonObjectInput.get("startDate").toString(), jsonObjectInput.get("endDate").toString());
 
                     JSONObject jsonObjectOutput = new JSONObject();

@@ -12,8 +12,8 @@ import java.util.Map;
  */
 public class Server implements Runnable{
     private static Server server;
-    private Map<String, Agent> listOfAgents = new HashMap<String, Agent>();
-    private Map<String, Thread> listOfThreads = new HashMap<String, Thread>();
+    private static Map<String, Agent> listOfAgents = new HashMap<String, Agent>();
+    private static Map<String, Thread> listOfThreads = new HashMap<String, Thread>();
 
     public static Server getServer() {
         return server;
@@ -23,7 +23,7 @@ public class Server implements Runnable{
         Server.server = server;
     }
 
-    public Map<String, Agent> getListOfAgents() {
+    public static Map<String, Agent> getListOfAgents() {
         return listOfAgents;
     }
 

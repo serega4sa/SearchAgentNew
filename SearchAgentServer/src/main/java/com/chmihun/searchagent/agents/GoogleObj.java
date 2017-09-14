@@ -18,10 +18,15 @@ public class GoogleObj {
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public GoogleObj(String reqTitle, String gLink, String sLink, MySQLDB database) {
-        Google db = (Google) database;
-        if (ID < db.getLastID())
-            ID = db.getLastID();
-        this.ID++;
+        if (database instanceof Google) {
+            Google db = (Google) database;
+            if (!db.isPresentInDB(sLink)) {
+                if (ID < db.getLastID())
+                    ID = db.getLastID();
+                this.ID++;
+            }
+        }
+
         this.reqTitle = reqTitle;
         this.timestamp = format.format(Calendar.getInstance().getTime());
         this.gLink = gLink;

@@ -38,7 +38,7 @@ function getGoogleSearchResults() {
                 startBtn.style.backgroundColor = "#4CAF50";
                 startBtn.style.cursor = "non-allowed";
                 startBtn.innerHTML = "Done";
-                setTimeout(clearToDefault(), 3000);
+                setTimeout(function(){clearToDefaultGSA();}, 3000);
             } else {
                 loader.style.visibility = "hidden";
                 startBtn.style.backgroundColor = "#F93D3D";
@@ -57,7 +57,7 @@ function getGoogleSearchResults() {
     loader.style.visibility = "visible";
 }
 
-function clearToDefault() {
+function clearToDefaultGSA() {
     startBtn.style.backgroundColor = "cornflowerblue";
     startBtn.style.cursor = "pointer";
     startBtn.innerHTML = "Start";

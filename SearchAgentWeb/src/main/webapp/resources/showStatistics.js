@@ -48,7 +48,7 @@ function getStatistics() {
                 startBtn.style.backgroundColor = "#4CAF50";
                 startBtn.style.cursor = "non-allowed";
                 startBtn.innerHTML = "Done";
-                setTimeout(displayResults(), 5000);
+                setTimeout(function(){displayResults();}, 3000);
             } else {
                 loader.style.visibility = "hidden";
                 startBtn.style.backgroundColor = "#F93D3D";
@@ -69,10 +69,10 @@ function getStatistics() {
 
 function displayResults() {
     document.getElementById('statistics').style.visibility = "visible";
-    setTimeout(clearToDefault(), 5000);
+    setTimeout(function(){clearToDefaultStat();}, 5000);
 }
 
-function clearToDefault() {
+function clearToDefaultStat() {
     startBtn.style.backgroundColor = "cornflowerblue";
     startBtn.style.cursor = "pointer";
     startBtn.innerHTML = "Start";
