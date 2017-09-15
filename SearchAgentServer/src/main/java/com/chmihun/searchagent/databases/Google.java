@@ -17,6 +17,7 @@ public class Google extends MySQLDB {
         setDbTable(res.getString("dbTableGoogle"));
         setLastID(getIDOfLastEntry());
         init();
+        logger.debug("Google DB was created and initialized.");
     }
 
     /** Just for tests */

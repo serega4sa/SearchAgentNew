@@ -48,7 +48,7 @@ function getStatistics() {
                 startBtn.style.backgroundColor = "#4CAF50";
                 startBtn.style.cursor = "non-allowed";
                 startBtn.innerHTML = "Done";
-                setTimeout(function(){displayResults();}, 3000);
+                displayResults();
             } else {
                 loader.style.visibility = "hidden";
                 startBtn.style.backgroundColor = "#F93D3D";
@@ -80,4 +80,5 @@ function clearToDefaultStat() {
     startDate.value = "";
     endDate.value = "";
     searchForm.style.visibility = "visible";
+    document.getElementById('statistics').style.visibility = "hidden";
 }

@@ -17,6 +17,7 @@ public class GoogleBackup extends MySQLDB {
     public GoogleBackup() {
         setDbTable(res.getString("dbTableGoogleBackup"));
         init();
+        logger.debug("Google backup DB was created and initialized.");
     }
 
     public void createTable() {

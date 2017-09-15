@@ -72,7 +72,7 @@ public class GoogleSearch extends Agent implements Runnable{
             }
         });
         googleSearchServer = this;
-        logger.debug("Google search initialized: " + googleSearchServer);
+        logger.debug("Google search agent initialized [" + googleSearchServer + "]");
         databeses.add(new Google());
         databeses.add(new GoogleBackup());
     }
