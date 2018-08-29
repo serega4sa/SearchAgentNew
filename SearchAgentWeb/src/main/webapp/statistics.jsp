@@ -55,7 +55,7 @@
             <input id="endDate" type="text" >
         </div>
         <div id="statistics">
-            <p>Results has been successfully saved to excel file. </br>You can find them by the following path:</p> </br><%= System.getProperty("user.dir") + "\\Statistics\\" %>
+            <p>Results has been successfully saved to excel file. </br>You can find them by the following path:</p> </br><%= System.getProperty("user.dir") + "\\statistics\\" %>
         </div>
         <div id="progressBar">
             <button id="startBtn" class="button buttonStart" onclick="getStatistics()">Get</button>

@@ -1,16 +1,36 @@
 package com.chmihun.searchagent.agents;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Created by Sergey.Chmihun on 08/23/2017.
+ * Agents factory that provides all available agents instances
  */
 public class AgentFactory {
-    public static Agent getAgent(String criteria) {
-        if (criteria.equals("google")) {
-            return new GoogleSearch();
-        } else if (criteria.equals("mailru")) {
-            return null;
+
+    private static Map<String, Agent> agents = new HashMap<String, Agent>();
+
+    public static Agent getAgent(AgentTypes agentType) {
+        return agents.containsKey(agentType.getAgentName()) ? agents.get(agentType.getAgentName()) : getNewAgent(agentType);
+    }
+
+    private static Agent getNewAgent(AgentTypes agentType) {
+        Agent newAgent = null;
+
+        switch (agentType) {
+            case GOOGLE:
+                newAgent = new GoogleSearch();
+                break;
+            case MAILRU:
+                //TODO: add mailru agent instance
+                newAgent = null;
+                break;
         }
 
-        return null;
+        if (newAgent != null) {
+            agents.put(agentType.getAgentName(), newAgent);
+        }
+
+        return newAgent;
     }
 }

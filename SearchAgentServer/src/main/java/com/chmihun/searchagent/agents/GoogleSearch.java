@@ -24,15 +24,16 @@ import java.util.ResourceBundle;
 /**
  * Created by Sergey.Chmihun on 06/27/2017.
  */
-public class GoogleSearch extends Agent implements Runnable{
+public class GoogleSearch extends Agent implements Runnable {
+
     private static final Logger logger = LoggerFactory.getLogger(GoogleSearch.class.getName());
     private String charset = "UTF-8";
     private String userAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
     private static ResourceBundle res = ResourceBundle.getBundle("common");
     private static GoogleSearch googleSearchServer;
 
-    private ArrayList<MySQLDB> databeses = new ArrayList<MySQLDB>();
-    private ArrayList<String> listOfRequests = new ArrayList<String>();
+    private ArrayList<MySQLDB> databeses = new ArrayList<>();
+    private ArrayList<String> listOfRequests = new ArrayList<>();
     //private ArrayList<String> whiteList;
     private int numberOfPages;
     private int counterOfFoundRes;
@@ -45,7 +46,9 @@ public class GoogleSearch extends Agent implements Runnable{
     //private WebDriverWait wait;
     private String fileOutputNameXls;
 
-    /** For tests */
+    /**
+     * For tests
+     */
     public ArrayList<String> getListOfRequests() {
         return listOfRequests;
     }
@@ -62,22 +65,20 @@ public class GoogleSearch extends Agent implements Runnable{
         return fileOutputNameXls;
     }
 
-    /** Replace usual exception handler with own on creation of object of class */
+    /**
+     * Replace usual exception handler with own on creation of object of class
+     */
     public GoogleSearch() {
-        Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
-        {
-            public void uncaughtException (Thread thread, Throwable e)
-            {
-                handleUncaughtException (thread, e);
-            }
-        });
+        Thread.setDefaultUncaughtExceptionHandler(this::handleUncaughtException);
         googleSearchServer = this;
         logger.debug("Google search agent initialized [" + googleSearchServer + "]");
         databeses.add(new Google());
         databeses.add(new GoogleBackup());
     }
 
-    /** Method that writes all uncaught exceptions to log file */
+    /**
+     * Method that writes all uncaught exceptions to log file
+     */
     public void handleUncaughtException(Thread t, Throwable ex) {
         logger.error("Uncaught exception in thread: " + t.getName(), ex);
     }
@@ -106,7 +107,7 @@ public class GoogleSearch extends Agent implements Runnable{
     }
 
     public void setNumberOfPages(int numberOfPages) {
-        logger.debug("NumberOfPages="+numberOfPages);
+        logger.debug("NumberOfPages=" + numberOfPages);
         this.numberOfPages = numberOfPages;
     }
 
@@ -117,7 +118,9 @@ public class GoogleSearch extends Agent implements Runnable{
         this.whiteList = whiteList;
     }*/
 
-    /** This method depending on the info that user specified creates attribute*/
+    /**
+     * This method depending on the info that user specified creates attribute
+     */
     public void createAttribute() {
         if (!qDuration.isEmpty()) {
             if (!vDuration.isEmpty()) {
@@ -136,22 +139,26 @@ public class GoogleSearch extends Agent implements Runnable{
 
     public void run() {
         logger.debug("RequestsList size = " + listOfRequests.size());
-        createAttribute();
+        if (!listOfRequests.isEmpty()) {
+            createAttribute();
 
-        for (String item : listOfRequests) {
-            saveLinks(item);
+            for (String item : listOfRequests) {
+                saveLinks(item);
+            }
+
+            //closeBrowser();
+            logger.info("Operation successfully finished! Found " + counterOfFoundRes + " links");
         }
-
-        //closeBrowser();
-        logger.info("Operation successfully finished! Found " + counterOfFoundRes + " links");
     }
 
-    /** This method saves links to the DB, preliminarily checking them on the compliance with request and filtering allowed sources */
+    /**
+     * This method saves links to the DB, preliminarily checking them on the compliance with request and filtering allowed sources
+     */
     public void saveLinks(String request) {
         logger.debug("Request = " + request);
 
         /** We go through all specified number of pages for current request */
-        for (int i = 0; i < numberOfPages; i++){
+        for (int i = 0; i < numberOfPages; i++) {
             Elements links = null;
 
             /** At this point we check whether ban is reached and choosing the way of working */
@@ -161,7 +168,7 @@ public class GoogleSearch extends Agent implements Runnable{
                 try {
                     links = Jsoup.connect(String.format("%s%s%s%s", localization, URLEncoder.encode(request, charset), attribute, pages)).userAgent(userAgent).get().select("a");
                     usualParser(links, request);
-                    logger.debug("Number of all found links on the page #" + (i+1) + " = " + links.size());
+                    logger.debug("Number of all found links on the page #" + (i + 1) + " = " + links.size());
                 } catch (IOException e) {
                     logger.error("Can't get webpage", e);
                     isBannedByGoogle = true;
@@ -197,8 +204,10 @@ public class GoogleSearch extends Agent implements Runnable{
         }
     }
 
-    /** This method parses HTML page in usual situation by using jsoup connection */
-    public void usualParser (Elements links, String request) {
+    /**
+     * This method parses HTML page in usual situation by using jsoup connection
+     */
+    public void usualParser(Elements links, String request) {
         saveResults(links, request);
     }
 
@@ -235,7 +244,9 @@ public class GoogleSearch extends Agent implements Runnable{
         saveResults(links, request);
     }*/
 
-    /** This method inserts data to DB, if request is matching */
+    /**
+     * This method inserts data to DB, if request is matching
+     */
     public void saveResults(Elements links, String request) {
         for (Element link : links) {
             ArrayList<String> urls = checkMatchingRequest(link, request);
@@ -249,8 +260,10 @@ public class GoogleSearch extends Agent implements Runnable{
         }
     }
 
-    /** This method returns element that matches to the request */
-    public ArrayList<String> checkMatchingRequest (Element link, String request) {
+    /**
+     * This method returns element that matches to the request
+     */
+    public ArrayList<String> checkMatchingRequest(Element link, String request) {
         ArrayList<String> urls = new ArrayList<String>();
 
         String title = link.text();
@@ -310,16 +323,18 @@ public class GoogleSearch extends Agent implements Runnable{
         }
     }*/
 
-    /** This method returns results for the requesting time period **/
-    public boolean generateStatisticsForPeriod(String query, String startDate, String endDate) {
+    /**
+     * This method returns results for the requesting time period
+     **/
+    public boolean generateStatisticsForPeriod(String query, String startDate, String endDate, String webappPath) {
         ArrayList<String> stat = ((Google) databeses.get(0)).getStatisticsForPeriod(query, startDate, endDate);
 
         try {
             if (stat != null) {
                 Date currentDate = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd_hh-mm-ss");
-                new File(System.getProperty("user.dir") + "\\Statistics").mkdir();
-                fileOutputNameXls = System.getProperty("user.dir") + "\\Statistics\\Results_" + format.format(currentDate) + ".xls";
+                new File(webappPath + "\\statistics").mkdir();
+                fileOutputNameXls = webappPath + "\\statistics\\Results_" + format.format(currentDate) + ".xls";
                 File excelFile = new File(fileOutputNameXls);
                 WritableWorkbook workbook = Workbook.createWorkbook(excelFile);
                 WritableSheet sheet = workbook.createSheet(query, 0);
@@ -329,11 +344,11 @@ public class GoogleSearch extends Agent implements Runnable{
                     String[] arr = stat.get(i).split(", ");
                     for (int j = 1; j < 6; j++) {
                         if (i == 0) {
-                            WritableCellFormat cellFormat =  new WritableCellFormat(new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD, true));
+                            WritableCellFormat cellFormat = new WritableCellFormat(new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD, true));
                             cell = new Label(j, i + 1, res.getString("title.col" + j), cellFormat);
                             sheet.addCell(cell);
                         }
-                        cell = new Label(j, i + 2, arr[j-1]);
+                        cell = new Label(j, i + 2, arr[j - 1]);
                         sheet.addCell(cell);
                     }
                 }

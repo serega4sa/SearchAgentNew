@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
  * Created by Sergey.Chmihun on 05/03/2017.
  */
 public abstract class MySQLDB {
+
     private static final Logger logger = LoggerFactory.getLogger(MySQLDB.class.getName());
     public static ResourceBundle res = ResourceBundle.getBundle("common_en");
     public String dbURL = res.getString("dbURL");
@@ -35,7 +36,9 @@ public abstract class MySQLDB {
         this.lastID = lastID;
     }
 
-    /** Init database: check for existence of DB and exact table inside it */
+    /**
+     * Init database: check for existence of DB and exact table inside it
+     */
     public void init() {
         if (isDBReady()) {
             logger.debug("DB is ready to use");
@@ -44,7 +47,9 @@ public abstract class MySQLDB {
         }
     }
 
-    /** Checking that database and table are present, otherwise create them */
+    /**
+     * Checking that database and table are present, otherwise create them
+     */
     public boolean isDBReady() {
         int count = 0;
 
@@ -55,7 +60,9 @@ public abstract class MySQLDB {
         return count == 1;
     }
 
-    /** Check that database exists */
+    /**
+     * Check that database exists
+     */
     public boolean isDBExist() {
         Connection conn = createConnection("default");
         Statement stmt = null;
@@ -79,7 +86,9 @@ public abstract class MySQLDB {
         return false;
     }
 
-    /** Get ID of the last entry in DB */
+    /**
+     * Get ID of the last entry in DB
+     */
     public int getIDOfLastEntry() {
         Connection conn = createConnection(dbName);
         Statement stmt = null;
@@ -113,12 +122,9 @@ public abstract class MySQLDB {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             if (dbName != null && dbName.equals("default")) {
-                connection = DriverManager
-                        .getConnection(dbURL + "?user=" + dbUser + "&password=" + dbPass);
+                connection = DriverManager.getConnection(dbURL + "?user=" + dbUser + "&password=" + dbPass + "&serverTimezone=UTC");
             } else {
-                connection = DriverManager
-                        .getConnection(dbURL + param,
-                                dbUser, dbPass);
+                connection = DriverManager.getConnection(dbURL + param + "?serverTimezone=UTC", dbUser, dbPass);
             }
             connection.setAutoCommit(true);
         } catch (SQLException e) {
@@ -195,7 +201,9 @@ public abstract class MySQLDB {
         }
     }
 
-/** ----- ABSTRACT METHODS ------------------------------------------------------------------------------- */
+    /**
+     * ----- ABSTRACT METHODS -------------------------------------------------------------------------------
+     */
 
     public abstract void createTable();
 
