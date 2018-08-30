@@ -5,9 +5,9 @@ Search Agent is an application that is meant to be helpful tool for finding and 
 
 ## Contents
 
-- [Installation](#markdown-header-installation)
-- [Configuration](#markdown-header-configuration)
-- [Usage](#markdown-header-usage)
+- [Installation](https://github.com/serega4sa/SearchAgentNew#installation)
+- [Configuration](https://github.com/serega4sa/SearchAgentNew#configuration)
+- [Usage](https://github.com/serega4sa/SearchAgentNew#usage)
 
 ## Installation
 For correct work of application you will need the following components to be installed:
