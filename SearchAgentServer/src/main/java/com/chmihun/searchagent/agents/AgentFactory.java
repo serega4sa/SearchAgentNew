@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class AgentFactory {
 
-    private static Map<String, Agent> agents = new HashMap<String, Agent>();
+    private static Map<String, Agent> agents = new HashMap<>();
 
     public static Agent getAgent(AgentTypes agentType) {
         return agents.containsKey(agentType.getAgentName()) ? agents.get(agentType.getAgentName()) : getNewAgent(agentType);

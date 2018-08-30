@@ -25,7 +25,7 @@ public class ActionHandlerServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ActionHandlerServlet.class.getName());
     private GoogleSearch gs;
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         JSONParser parser = new JSONParser();
         JSONObject jsonObjectInput;
 
@@ -55,7 +55,7 @@ public class ActionHandlerServlet extends HttpServlet {
         }
     }
 
-    private boolean performAction(JSONObject jsonObjectInput) throws IOException {
+    private boolean performAction(JSONObject jsonObjectInput) {
         String actionName = ((String) jsonObjectInput.get("action"));
         if (actionName.equals("getGoogleSearchResults")) {
             generateGoogleSearchResults(jsonObjectInput);
