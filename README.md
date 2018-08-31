@@ -5,22 +5,37 @@ Search Agent is an application that is meant to be helpful tool for finding and 
 
 ## Contents
 
+- [Features](https://github.com/serega4sa/SearchAgentNew#features)
 - [Installation](https://github.com/serega4sa/SearchAgentNew#installation)
 - [Configuration](https://github.com/serega4sa/SearchAgentNew#configuration)
 - [Usage](https://github.com/serega4sa/SearchAgentNew#usage)
 
+## Features
+
+Currently there are two available features:
+* **Google search** - finds all links to the queried title of content by using Google search website. There are ability 
+to specify:
+    * video duration
+    * search period
+    * localization
+    * number of result pages to be processed
+* **Results export** - combines found results for the specified period of time to the .xml file
+
+> There are already present icons for Mail.ru search and mail functionality, but so far they haven't been 
+implemented yet
+
 ## Installation
 For correct work of application you will need the following components to be installed:
 * Java
-  * To download the latest version follow the[link](https://www.java.com/inc/BrowserRedirect1.jsp?locale=ru)
-  * Installation guide[link](https://www.java.com/ru/download/help/ie_online_install.xml)
-  * Configure environment variables[link](https://stackoverflow.com/a/31340459)
+  * Download [link](https://www.java.com/inc/BrowserRedirect1.jsp?locale=ru)
+  * Installation guide [link](https://www.java.com/ru/download/help/ie_online_install.xml)
+  * Configuration of environment variables guide [link](https://stackoverflow.com/a/31340459)
 * Tomcat
-  * To download the latest version follow the[link](http://apache.cp.if.ua/tomcat/tomcat-9/v9.0.11/bin/apache-tomcat-9.0.11.zip)
-  * Installation guide[link](https://www.wikihow.com/Install-Tomcat-on-Windows-7)
+  * Download [link](http://apache.cp.if.ua/tomcat/tomcat-9/v9.0.11/bin/apache-tomcat-9.0.11.zip)
+  * Installation guide [link](https://www.wikihow.com/Install-Tomcat-on-Windows-7)
 * MySQL
   * MySQL Community Server [download link](https://dev.mysql.com/downloads/mysql/)
-  * MySQL Workbench (_optional_, to be able to work directly with database)[download link](https://dev.mysql.com/downloads/workbench/)
+  * MySQL Workbench (_optional_, to be able to work directly with database) [download link](https://dev.mysql.com/downloads/workbench/)
 
 ## Configuration
 
@@ -41,4 +56,5 @@ right side and wait until it is done.
 
 #### Results of the search
 To get the results of the search go to statistics submenu on the left side bar. Specify all needed data and press 
-get button. Results for the chosen period will be combined to the .xml file, that you can find in the _..webapps/search-agent-web/statistics/_
+get button. Results for the chosen period will be combined to the .xml file, that you can find in the 
+_..webapps/search-agent-web/statistics/_
