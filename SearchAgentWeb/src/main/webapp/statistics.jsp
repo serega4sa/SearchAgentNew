@@ -8,6 +8,8 @@
     <script src="resources/webapp.js"></script>
     <script src="resources/showStatistics.js"></script>
     <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link rel="stylesheet" type="text/css" href="resources/calendar/bootstrap-combined.min.css">
+    <link rel="stylesheet" type="text/css" href="resources/calendar/bootstrap-datetimepicker.min.css">
     <link rel="icon" href="images/spy_icon.png">
 </head>
 <body>
@@ -48,11 +50,21 @@
             <p>Enter query:</p>
             <input id="query" type="text" >
             <br/>
-            <p>Enter start day (format YYYY-MM-DD HH:mm):</p>
-            <input id="startDate" type="text" >
+            <p>Enter start day:</p>
+            <div id="datetimepickerStart" class="input-append date">
+                <input id="startDate" type="text"/>
+                <span class="add-on">
+                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                </span>
+            </div>
             <br/>
-            <p>Enter end day (format YYYY-MM-DD HH:mm):</p>
-            <input id="endDate" type="text" >
+            <p>Enter end day:</p>
+            <div id="datetimepickerEnd" class="input-append date">
+                <input id="endDate" type="text"/>
+                <span class="add-on">
+                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                </span>
+            </div>
         </div>
         <div id="statistics">
             <p>Results has been successfully saved to excel file. </br>You can find them by the following path:</p> </br><%= System.getProperty("user.dir") + "\\statistics\\" %>
@@ -64,4 +76,22 @@
     </div>
 </div>
 </body>
+<script type="text/javascript" src="resources/calendar/jquery.min.js"></script>
+<script type="text/javascript" src="resources/calendar/bootstrap.min.js"></script>
+<script type="text/javascript" src="resources/calendar/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $('#datetimepickerStart').datetimepicker({
+            format: 'yyyy-MM-dd hh:mm',
+            pickSeconds: false
+        });
+    });
+
+    $(function() {
+        $('#datetimepickerEnd').datetimepicker({
+            format: 'yyyy-MM-dd hh:mm',
+            pickSeconds: false
+        });
+    });
+</script>
 </html>

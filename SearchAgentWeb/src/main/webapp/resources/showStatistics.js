@@ -15,7 +15,27 @@ function returnToMain() {
     window.location.replace((location.href).substr(0, (location.href).lastIndexOf('/')));
 }
 
-/** Creates request to the server */
+/**
+ * Checks whether parameters aren't empty
+ * @return boolean - true if any field is empty, otherwise false
+ */
+function isParamsEmpty() {
+    return query.value === "" || startDate === "" || endDate === "";
+}
+
+/**
+ * Checks whether dates are correctly specified (end date is after start date)
+ * @return boolean - true if correct, otherwise false
+ */
+function isCorrectDates() {
+    var sDate = new Date(startDate.value);
+    var eDate = new Date(endDate.value);
+    return eDate > sDate;
+}
+
+/**
+ * Creates request to the server
+ * */
 function createRequest() {
     var xhr = new XMLHttpRequest();
     var url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/action");
@@ -25,7 +45,9 @@ function createRequest() {
     return xhr;
 }
 
-/** Sends request with parameters to the server to execute search of query and add results to the DB */
+/**
+ * Sends request with parameters to the server to execute search of query and add results to the DB
+ * */
 function getStatistics() {
     startBtn = document.getElementById('startBtn');
     loader = document.getElementById('loader');
@@ -36,40 +58,62 @@ function getStatistics() {
     query = document.getElementById('query');
     startDate = document.getElementById('startDate');
     endDate = document.getElementById('endDate');
-    var xhr = createRequest();
-    var data = JSON.stringify({"action":"getStatistics", "agentType": agentType, "query": query.value, "startDate": startDate.value, "endDate": endDate.value});
 
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            var response = JSON.parse(xhr.responseText);
-            var result = response.result.toString();
-            if (result == 1) {
-                loader.style.visibility = "hidden";
-                startBtn.style.backgroundColor = "#4CAF50";
-                startBtn.style.cursor = "non-allowed";
-                startBtn.innerHTML = "Done";
-                displayResults();
-            } else {
-                loader.style.visibility = "hidden";
-                startBtn.style.backgroundColor = "#F93D3D";
-                startBtn.style.cursor = "non-allowed";
-                startBtn.innerHTML = "Failed";
+    var isEmpty = isParamsEmpty();
+    var isCorrect = isCorrectDates();
+
+    if (!isEmpty && isCorrect) {
+        var xhr = createRequest();
+        var data = JSON.stringify({
+            "action": "getStatistics",
+            "agentType": agentType,
+            "query": query.value,
+            "startDate": startDate.value,
+            "endDate": endDate.value
+        });
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                var response = JSON.parse(xhr.responseText);
+                var result = response.result.toString();
+                if (result == 1) {
+                    loader.style.visibility = "hidden";
+                    startBtn.style.backgroundColor = "#4CAF50";
+                    startBtn.style.cursor = "non-allowed";
+                    startBtn.innerHTML = "Done";
+                    displayResults();
+                } else {
+                    loader.style.visibility = "hidden";
+                    startBtn.style.backgroundColor = "#F93D3D";
+                    startBtn.style.cursor = "non-allowed";
+                    startBtn.innerHTML = "Failed";
+                }
             }
+        };
+
+        xhr.send(data);
+
+        // Getting statistics in progress indication
+        startBtn.style.cursor = "none";
+        startBtn.style.backgroundColor = "orange";
+        startBtn.innerHTML = "Wait...";
+        loader.style.visibility = "visible";
+    } else {
+        var warningMessage;
+        if (isEmpty && !isCorrect) {
+            warningMessage = "Please specify query and correct dates";
+        } else {
+            warningMessage = isEmpty ? "Please fill all fields" : "Please specify correct dates interval"
         }
-    };
-
-    xhr.send(data);
-
-    /** Getting statistics in progress indication */
-    startBtn.style.cursor = "none";
-    startBtn.style.backgroundColor = "orange";
-    startBtn.innerHTML = "Wait...";
-    loader.style.visibility = "visible";
+        window.alert(warningMessage);
+    }
 }
 
 function displayResults() {
     document.getElementById('statistics').style.visibility = "visible";
-    setTimeout(function(){clearToDefaultStat();}, 5000);
+    setTimeout(function () {
+        clearToDefaultStat();
+    }, 10000);
 }
 
 function clearToDefaultStat() {

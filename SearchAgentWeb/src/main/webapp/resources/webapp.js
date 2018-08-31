@@ -1,12 +1,27 @@
-var startBtn = document.getElementById('startBtn');
-var loader = document.getElementById('loader');
-var query = document.getElementById('query');
-var vDur = document.getElementById('vDuration');
-var qDur = document.getElementById('qDuration');
-var local = document.getElementById('localization');
-var numOfPages = document.getElementById('numOfPages');
+var startBtn;
+var loader;
+var query;
+var vDur;
+var qDur;
+var local;
+var numOfPages;
 
-/** Creates request to the server */
+/**
+ * Collects all filled data
+ * @return boolean - true if all data is filled, otherwise false
+ * */
+function getQueryParams() {
+    query = document.getElementById('query');
+    vDur = document.getElementById('vDuration');
+    qDur = document.getElementById('qDuration');
+    local = document.getElementById('localization');
+    numOfPages = document.getElementById('numOfPages');
+    return (query.value.trim() !== "" && numOfPages.value.trim() !== "");
+}
+
+/**
+ * Creates request to the server
+ * */
 function createRequest() {
     var xhr = new XMLHttpRequest();
     var url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/action");
@@ -16,45 +31,54 @@ function createRequest() {
     return xhr;
 }
 
-/** Sends request with parameters to the server to execute search of query and add results to the DB */
+/**
+ * Sends request with parameters to the server to execute search of query and add results to the DB
+ * */
 function getGoogleSearchResults() {
     startBtn = document.getElementById('startBtn');
     loader = document.getElementById('loader');
-    query = document.getElementById('query');
-    vDur = document.getElementById('vDuration');
-    qDur = document.getElementById('qDuration');
-    local = document.getElementById('localization');
-    numOfPages = document.getElementById('numOfPages');
-    var xhr = createRequest();
-    var data = JSON.stringify({"action":"getGoogleSearchResults", "query": query.value, "vDuration": vDur.options[vDur.selectedIndex].value,
-        "qDuration": qDur.options[qDur.selectedIndex].value, "localization": local.options[local.selectedIndex].value, "numOfPages": numOfPages.value});
+    if (getQueryParams()) {
+        var xhr = createRequest();
+        var data = JSON.stringify({
+            "action": "getGoogleSearchResults",
+            "query": query.value,
+            "vDuration": vDur.options[vDur.selectedIndex].value,
+            "qDuration": qDur.options[qDur.selectedIndex].value,
+            "localization": local.options[local.selectedIndex].value,
+            "numOfPages": numOfPages.value
+        });
 
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            var response = JSON.parse(xhr.responseText);
-            var result = response.result.toString();
-            if (result == 1) {
-                loader.style.visibility = "hidden";
-                startBtn.style.backgroundColor = "#4CAF50";
-                startBtn.style.cursor = "non-allowed";
-                startBtn.innerHTML = "Done";
-                setTimeout(function(){clearToDefaultGSA();}, 3000);
-            } else {
-                loader.style.visibility = "hidden";
-                startBtn.style.backgroundColor = "#F93D3D";
-                startBtn.style.cursor = "non-allowed";
-                startBtn.innerHTML = "Failed";
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                var response = JSON.parse(xhr.responseText);
+                var result = response.result.toString();
+                if (result == 1) {
+                    loader.style.visibility = "hidden";
+                    startBtn.style.backgroundColor = "#4CAF50";
+                    startBtn.style.cursor = "non-allowed";
+                    startBtn.innerHTML = "Done";
+                    setTimeout(function () {
+                        clearToDefaultGSA();
+                    }, 3000);
+                } else {
+                    loader.style.visibility = "hidden";
+                    startBtn.style.backgroundColor = "#F93D3D";
+                    startBtn.style.cursor = "non-allowed";
+                    startBtn.innerHTML = "Failed";
+                }
             }
-        }
-    };
+        };
 
-    xhr.send(data);
+        xhr.send(data);
 
-    /** Searching in progress indication */
-    startBtn.style.cursor = "none";
-    startBtn.style.backgroundColor = "orange";
-    startBtn.innerHTML = "Wait...";
-    loader.style.visibility = "visible";
+        // Searching in progress indication
+        startBtn.style.cursor = "none";
+        startBtn.style.backgroundColor = "orange";
+        startBtn.innerHTML = "Wait...";
+        loader.style.visibility = "visible";
+    } else {
+        window.alert("Please fill all data");
+    }
 }
 
 function clearToDefaultGSA() {
