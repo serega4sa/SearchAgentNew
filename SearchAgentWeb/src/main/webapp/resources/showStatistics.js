@@ -1,13 +1,28 @@
 var startBtn;
 var loader;
+var statistics;
+var statisticsStatus;
+var statisticsPath;
+
 var agentType;
 var query;
 var startDate;
 var endDate;
-var searchForm;
+
+function initPageElements() {
+    startBtn = document.getElementById('startBtn');
+    loader = document.getElementById('loader');
+    statistics = document.getElementById('statistics');
+    statisticsStatus = document.getElementById('statisticsStatus');
+    statisticsPath = document.getElementById('statisticsPath');
+    agentType = document.getElementById('agentType');
+    query = document.getElementById('query');
+    startDate = document.getElementById('startDate');
+    endDate = document.getElementById('endDate');
+}
 
 function showStatistics() {
-    var url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/statistics.jsp");
+    let url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/statistics.jsp");
     window.location.replace(url);
 }
 
@@ -20,7 +35,7 @@ function returnToMain() {
  * @return boolean - true if any field is empty, otherwise false
  */
 function isParamsEmpty() {
-    return query.value === "" || startDate === "" || endDate === "";
+    return query.value === "" || startDate.value === "" || endDate.value === "";
 }
 
 /**
@@ -28,8 +43,8 @@ function isParamsEmpty() {
  * @return boolean - true if correct, otherwise false
  */
 function isCorrectDates() {
-    var sDate = new Date(startDate.value);
-    var eDate = new Date(endDate.value);
+    let sDate = new Date(startDate.value);
+    let eDate = new Date(endDate.value);
     return eDate > sDate;
 }
 
@@ -37,8 +52,8 @@ function isCorrectDates() {
  * Creates request to the server
  * */
 function createRequest() {
-    var xhr = new XMLHttpRequest();
-    var url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/action");
+    let xhr = new XMLHttpRequest();
+    let url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/action");
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
@@ -49,24 +64,17 @@ function createRequest() {
  * Sends request with parameters to the server to execute search of query and add results to the DB
  * */
 function getStatistics() {
-    startBtn = document.getElementById('startBtn');
-    loader = document.getElementById('loader');
-    searchForm = document.getElementById('searchForm');
+    initPageElements();
+    let agent = agentType.options[agentType.selectedIndex].value;
 
-    var temp = document.getElementById('agentType');
-    agentType = temp.options[temp.selectedIndex].value;
-    query = document.getElementById('query');
-    startDate = document.getElementById('startDate');
-    endDate = document.getElementById('endDate');
-
-    var isEmpty = isParamsEmpty();
-    var isCorrect = isCorrectDates();
+    let isEmpty = isParamsEmpty();
+    let isCorrect = isCorrectDates();
 
     if (!isEmpty && isCorrect) {
-        var xhr = createRequest();
-        var data = JSON.stringify({
+        let xhr = createRequest();
+        let data = JSON.stringify({
             "action": "getStatistics",
-            "agentType": agentType,
+            "agentType": agent,
             "query": query.value,
             "startDate": startDate.value,
             "endDate": endDate.value
@@ -74,20 +82,20 @@ function getStatistics() {
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
-                var response = JSON.parse(xhr.responseText);
-                var result = response.result.toString();
+                let response = JSON.parse(xhr.responseText);
+                let result = response.result.toString();
                 if (result == 1) {
                     loader.style.visibility = "hidden";
                     startBtn.style.backgroundColor = "#4CAF50";
                     startBtn.style.cursor = "non-allowed";
                     startBtn.innerHTML = "Done";
-                    displayResults();
                 } else {
                     loader.style.visibility = "hidden";
                     startBtn.style.backgroundColor = "#F93D3D";
                     startBtn.style.cursor = "non-allowed";
                     startBtn.innerHTML = "Failed";
                 }
+                displayResults(result);
             }
         };
 
@@ -99,7 +107,7 @@ function getStatistics() {
         startBtn.innerHTML = "Wait...";
         loader.style.visibility = "visible";
     } else {
-        var warningMessage;
+        let warningMessage;
         if (isEmpty && !isCorrect) {
             warningMessage = "Please specify query and correct dates";
         } else {
@@ -109,20 +117,29 @@ function getStatistics() {
     }
 }
 
-function displayResults() {
-    document.getElementById('statistics').style.visibility = "visible";
+function displayResults(result) {
+    if (result == 1) {
+        statisticsStatus.textContent = "Results has been successfully saved to excel file. You can find them by the following path:";
+        statisticsPath.style.visibility = "visible";
+    } else if (result == 0) {
+        statistics.style.color = "#F93D3D";
+        statisticsStatus.textContent = "Requested content wasn't found for the specified time interval.";
+        statisticsPath.style.visibility = "hidden";
+    }
+    statisticsStatus.style.visibility = "visible";
     setTimeout(function () {
-        clearToDefaultStat();
+        clearToDefaultState();
     }, 10000);
 }
 
-function clearToDefaultStat() {
+function clearToDefaultState() {
     startBtn.style.backgroundColor = "cornflowerblue";
     startBtn.style.cursor = "pointer";
     startBtn.innerHTML = "Start";
     query.value = "";
     startDate.value = "";
     endDate.value = "";
-    searchForm.style.visibility = "visible";
-    document.getElementById('statistics').style.visibility = "hidden";
+    statistics.style.color = "#4CAF50";
+    statisticsStatus.style.visibility = "hidden";
+    statisticsPath.style.visibility = "hidden";
 }

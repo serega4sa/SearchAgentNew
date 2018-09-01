@@ -1,30 +1,36 @@
 var startBtn;
 var loader;
+
 var query;
 var vDur;
 var qDur;
 var local;
 var numOfPages;
 
-/**
- * Collects all filled data
- * @return boolean - true if all data is filled, otherwise false
- * */
-function getQueryParams() {
+function initPageElements() {
+    startBtn = document.getElementById('startBtn');
+    loader = document.getElementById('loader');
     query = document.getElementById('query');
     vDur = document.getElementById('vDuration');
     qDur = document.getElementById('qDuration');
     local = document.getElementById('localization');
     numOfPages = document.getElementById('numOfPages');
-    return (query.value.trim() !== "" && numOfPages.value.trim() !== "");
+}
+
+/**
+ * Checks whether parameters aren't empty
+ * @return boolean - true if any field is empty, otherwise false
+ */
+function isParamsEmpty() {
+    return (query.value.trim() === "" && numOfPages.value.trim() === "");
 }
 
 /**
  * Creates request to the server
  * */
 function createRequest() {
-    var xhr = new XMLHttpRequest();
-    var url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/action");
+    let xhr = new XMLHttpRequest();
+    let url = (location.href).substr(0, (location.href).lastIndexOf('/')).concat("/action");
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
@@ -35,11 +41,10 @@ function createRequest() {
  * Sends request with parameters to the server to execute search of query and add results to the DB
  * */
 function getGoogleSearchResults() {
-    startBtn = document.getElementById('startBtn');
-    loader = document.getElementById('loader');
-    if (getQueryParams()) {
-        var xhr = createRequest();
-        var data = JSON.stringify({
+    initPageElements();
+    if (isParamsEmpty()) {
+        let xhr = createRequest();
+        let data = JSON.stringify({
             "action": "getGoogleSearchResults",
             "query": query.value,
             "vDuration": vDur.options[vDur.selectedIndex].value,
@@ -50,15 +55,15 @@ function getGoogleSearchResults() {
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
-                var response = JSON.parse(xhr.responseText);
-                var result = response.result.toString();
+                let response = JSON.parse(xhr.responseText);
+                let result = response.result.toString();
                 if (result == 1) {
                     loader.style.visibility = "hidden";
                     startBtn.style.backgroundColor = "#4CAF50";
                     startBtn.style.cursor = "non-allowed";
                     startBtn.innerHTML = "Done";
                     setTimeout(function () {
-                        clearToDefaultGSA();
+                        clearToDefaultState();
                     }, 3000);
                 } else {
                     loader.style.visibility = "hidden";
@@ -81,7 +86,7 @@ function getGoogleSearchResults() {
     }
 }
 
-function clearToDefaultGSA() {
+function clearToDefaultState() {
     startBtn.style.backgroundColor = "cornflowerblue";
     startBtn.style.cursor = "pointer";
     startBtn.innerHTML = "Start";

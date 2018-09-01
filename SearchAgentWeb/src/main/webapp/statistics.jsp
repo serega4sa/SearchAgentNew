@@ -1,11 +1,16 @@
-<%@ page import="com.chmihun.searchagent.agents.GoogleSearch" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%!
+    private String getTomcatPath(String currentURL) {
+        String tomcatPath = System.getProperty("user.dir");
+        String appName = currentURL.substring(currentURL.lastIndexOf("/") + 1);
+        return tomcatPath.substring(0, tomcatPath.lastIndexOf("\\")) + "\\webapps\\" + appName + "\\statistics\\";
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Search Agent</title>
-    <script src="resources/webapp.js"></script>
+    <script src="resources/googleSearch.js"></script>
     <script src="resources/showStatistics.js"></script>
     <link rel="stylesheet" type="text/css" href="resources/style.css">
     <link rel="stylesheet" type="text/css" href="resources/calendar/bootstrap-combined.min.css">
@@ -66,8 +71,9 @@
                 </span>
             </div>
         </div>
-        <div id="statistics">
-            <p>Results has been successfully saved to excel file. </br>You can find them by the following path:</p> </br><%= System.getProperty("user.dir") + "\\statistics\\" %>
+        <div id="statistics" style="line-height: 35px;">
+            <p id="statisticsStatus"></p>
+            <p id="statisticsPath"><%= getTomcatPath(request.getContextPath()) %></p>
         </div>
         <div id="progressBar">
             <button id="startBtn" class="button buttonStart" onclick="getStatistics()">Get</button>

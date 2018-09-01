@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>Search Agent</title>
-    <script src="resources/webapp.js"></script>
+    <script src="resources/googleSearch.js"></script>
     <script src="resources/showStatistics.js"></script>
     <link rel="stylesheet" type="text/css" href="resources/style.css">
     <link rel="icon" href="images/spy_icon.png">

@@ -330,7 +330,7 @@ public class GoogleSearch extends Agent implements Runnable {
         ArrayList<String> stat = ((Google) databeses.get(0)).getStatisticsForPeriod(query, startDate, endDate);
 
         try {
-            if (stat != null) {
+            if (stat.size() > 0) {
                 Date currentDate = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd_hh-mm-ss");
                 new File(webappPath + "\\statistics").mkdir();
