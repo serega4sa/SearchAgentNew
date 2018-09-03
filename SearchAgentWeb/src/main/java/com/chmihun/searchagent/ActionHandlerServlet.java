@@ -4,6 +4,7 @@ import com.chmihun.searchagent.agents.AgentFactory;
 import com.chmihun.searchagent.agents.AgentTypes;
 import com.chmihun.searchagent.agents.ExportController;
 import com.chmihun.searchagent.agents.GoogleSearchAgent;
+import com.chmihun.searchagent.databases.DBType;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -62,10 +63,11 @@ public class ActionHandlerServlet extends HttpServlet {
             return true;
         } else if (actionName.equals(Keys.Response.GET_STATISTICS)) {
             String query = jsonObjectInput.get(Keys.Response.QUERY).toString();
+            String agentType = jsonObjectInput.get(Keys.Response.AGENT_TYPE).toString();
             String startDate = jsonObjectInput.get(Keys.Response.START_DATE).toString();
             String endDate = jsonObjectInput.get(Keys.Response.END_DATE).toString();
             String webappPath = getServletContext().getRealPath(File.separator);
-            return ExportController.generateStatisticsForPeriod(query, startDate, endDate, webappPath);
+            return ExportController.generateStatisticsForPeriod(DBType.getDBTypeByName(agentType), query, startDate, endDate, webappPath);
         }
         return false;
     }

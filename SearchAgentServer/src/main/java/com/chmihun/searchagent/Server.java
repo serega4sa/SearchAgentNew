@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by Sergey.Chmihun on 08/23/2017.
  */
-public class Server implements Runnable{
+public class Server implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class.getName());
     private static final Server server = new Server();

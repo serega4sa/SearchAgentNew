@@ -2,6 +2,8 @@ import com.chmihun.searchagent.Server;
 import com.chmihun.searchagent.agents.AgentFactory;
 import com.chmihun.searchagent.agents.AgentTypes;
 import com.chmihun.searchagent.agents.ExportController;
+import com.chmihun.searchagent.databases.DBFactory;
+import com.chmihun.searchagent.databases.DBType;
 import com.chmihun.searchagent.databases.GoogleDB;
 import com.chmihun.searchagent.agents.GoogleObj;
 import com.chmihun.searchagent.agents.GoogleSearchAgent;
@@ -38,8 +40,9 @@ public class Main {
 
     @Test
     public void googleSearchStatisticsTest() {
-        new Thread(Server.getServerInstance()).start();
-        ExportController.generateStatisticsForPeriod("Метод Фрейда", "2018-08-30 00:21", "2018-08-30 00:25", "C:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\webapps\\search-agent-new");
+        new Thread(Server.getServerInstance()).run();
+        String agentType = "googleBackup";
+        ExportController.generateStatisticsForPeriod(DBType.getDBTypeByName(agentType), "Метод Фрейда", "2018-08-30 00:21", "2018-08-30 00:25", "C:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\webapps\\search-agent-new");
     }
 
     @After

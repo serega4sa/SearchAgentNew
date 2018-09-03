@@ -18,6 +18,7 @@ public class Keys {
         public static final String NUM_OF_PAGES = "numOfPages";
 
         // Statistics parameters
+        public static final String AGENT_TYPE = "agentType";
         public static final String START_DATE = "startDate";
         public static final String END_DATE = "endDate";
     }

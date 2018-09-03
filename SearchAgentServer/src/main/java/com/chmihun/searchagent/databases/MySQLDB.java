@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -202,13 +203,13 @@ public abstract class MySQLDB {
         }
     }
 
-    /**
-     * ----- ABSTRACT METHODS -------------------------------------------------------------------------------
-     */
+/* ----- ABSTRACT METHODS ---------------------------------------------------------------------------- */
 
     public abstract void createTable();
 
     public abstract void insertDataToDB(Object object);
 
-/** --------------------------------------------------------------------------------------------------- */
+    public abstract ArrayList<String> getStatisticsForPeriod(String query, String startDate, String endDate);
+
+/* --------------------------------------------------------------------------------------------------- */
 }

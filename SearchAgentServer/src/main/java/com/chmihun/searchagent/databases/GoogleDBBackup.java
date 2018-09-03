@@ -11,50 +11,24 @@ import java.sql.Statement;
 /**
  * Created by Sergey.Chmihun on 07/06/2017.
  */
-public class GoogleDBBackup extends MySQLDB {
+public class GoogleDBBackup extends GoogleDB {
 
     private static final Logger logger = LoggerFactory.getLogger(GoogleDBBackup.class.getName());
+    private static final String DB_TABLE_NAME = "dbTableGoogleBackup";
 
     public GoogleDBBackup() {
-        setDbTable(res.getString("dbTableGoogleBackup"));
+        setDbTable(res.getString(DB_TABLE_NAME));
         init();
         logger.debug("GoogleDBBackup was created and initialized.");
     }
 
+    @Override
     public void createTable() {
-        Connection conn = createConnection(dbName);
-        Statement stmt = null;
-        try {
-            stmt = conn.createStatement();
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + getDbTable() + "(pTimestamp text not null, reqTitle text not null, sourceSite text not null, googleLink text not null, sourceLink text not null)");
-        } catch (SQLException e) {
-            logger.error("Problems with creating table. ", e);
-        } finally {
-            closeStatement(stmt);
-            closeConn(conn);
-        }
+        createTable("CREATE TABLE IF NOT EXISTS " + getDbTable() + "(pTimestamp text not null, reqTitle text not null, sourceSite text not null, googleLink text not null, sourceLink text not null)");
     }
 
+    @Override
     public void insertDataToDB(Object obj) {
-        GoogleObj object = (GoogleObj) obj;
-
-        /** Cut direct domain name of pirate site from sLink */
-        String temp = object.getsLink().substring(object.getsLink().indexOf("//") + 2);
-        String sourceSite = temp.substring(0, temp.indexOf("/"));
-        if (sourceSite.contains("www.")) {
-            sourceSite = sourceSite.substring(4);
-        }
-
-        Connection conn = createConnection(dbName);
-        Statement stmt = null;
-        try {
-            stmt = conn.createStatement();
-            stmt.executeUpdate("INSERT INTO " + getDbTable() + " VALUES ('" + object.getTimestamp() + "', '" + object.getreqTitle() + "', '" + sourceSite + "', '" + object.getgLink() + "', '" + object.getsLink() + "');");
-        } catch (SQLException e) {
-            logger.error("Problems with inserting data into DB. ", e);
-        } finally {
-            closeStatement(stmt);
-            closeConn(conn);
-        }
+        insertDataToDB(((GoogleObj) obj));
     }
 }
