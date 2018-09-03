@@ -59,7 +59,7 @@ public class ExportController {
                     workbook.write();
                     workbook.close();
                     return true;
-                } else throw new NullPointerException("Array of results is empty. ");
+                } else throw new NullPointerException("Array of results is empty.");
             } catch (Exception e) {
                 logger.error("Something went wrong. ", e);
                 return false;

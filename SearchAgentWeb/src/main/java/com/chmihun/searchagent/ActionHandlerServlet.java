@@ -73,16 +73,16 @@ public class ActionHandlerServlet extends HttpServlet {
     }
 
     private void generateGoogleSearchResults(JSONObject jsonObjectInput) {
-        GoogleSearchAgent gs = (GoogleSearchAgent) AgentFactory.getAgent(AgentTypes.GOOGLE);
-        gs.getListOfRequests().clear();
+        GoogleSearchAgent gsa = (GoogleSearchAgent) AgentFactory.getAgent(AgentTypes.GOOGLE);
+        gsa.clearRequestsList();
         String[] queryList = jsonObjectInput.get(Keys.Response.QUERY).toString().split(",");
         for (String query : queryList) {
-            gs.getListOfRequests().add(query.trim());
+            gsa.addRequestTitle(query.trim());
         }
-        gs.setvDuration(jsonObjectInput.get(Keys.Response.VDURATION).toString());
-        gs.setqDuration(jsonObjectInput.get(Keys.Response.QDURATION).toString());
-        gs.setLocalization(jsonObjectInput.get(Keys.Response.LOCALIZATION).toString());
-        gs.setNumberOfPages(Integer.parseInt(jsonObjectInput.get(Keys.Response.NUM_OF_PAGES).toString()));
-        gs.run();
+        gsa.setvDuration(jsonObjectInput.get(Keys.Response.VDURATION).toString());
+        gsa.setqDuration(jsonObjectInput.get(Keys.Response.QDURATION).toString());
+        gsa.setLocalization(jsonObjectInput.get(Keys.Response.LOCALIZATION).toString());
+        gsa.setNumberOfPages(Integer.parseInt(jsonObjectInput.get(Keys.Response.NUM_OF_PAGES).toString()));
+        gsa.run();
     }
 }
