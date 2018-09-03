@@ -1,6 +1,6 @@
 package com.chmihun.searchagent.agents;
 
-import com.chmihun.searchagent.databases.Google;
+import com.chmihun.searchagent.databases.GoogleDB;
 import com.chmihun.searchagent.databases.MySQLDB;
 
 import java.text.SimpleDateFormat;
@@ -18,8 +18,8 @@ public class GoogleObj {
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public GoogleObj(String reqTitle, String gLink, String sLink, MySQLDB database) {
-        if (database instanceof Google) {
-            Google db = (Google) database;
+        if (database instanceof GoogleDB) {
+            GoogleDB db = (GoogleDB) database;
             if (!db.isPresentInDB(sLink)) {
                 if (ID < db.getLastID())
                     ID = db.getLastID();

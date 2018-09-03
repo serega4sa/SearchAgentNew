@@ -2,7 +2,7 @@ package com.chmihun.searchagent;
 
 import com.chmihun.searchagent.agents.AgentFactory;
 import com.chmihun.searchagent.agents.AgentTypes;
-import com.chmihun.searchagent.agents.GoogleSearch;
+import com.chmihun.searchagent.agents.GoogleSearchAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class Server implements Runnable{
 
     public void run() {
         logger.debug("Server started.");
-        listOfThreads.put("googleThread", new Thread((GoogleSearch) AgentFactory.getAgent(AgentTypes.GOOGLE)));
+        listOfThreads.put("googleThread", new Thread((GoogleSearchAgent) AgentFactory.getAgent(AgentTypes.GOOGLE)));
         listOfThreads.get("googleThread").start();
     }
 }

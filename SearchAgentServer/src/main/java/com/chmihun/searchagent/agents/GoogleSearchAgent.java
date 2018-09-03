@@ -1,38 +1,29 @@
 package com.chmihun.searchagent.agents;
 
-import com.chmihun.searchagent.databases.Google;
-import com.chmihun.searchagent.databases.GoogleBackup;
-import com.chmihun.searchagent.databases.MySQLDB;
-import jxl.Workbook;
-import jxl.write.*;
+import com.chmihun.searchagent.databases.DBFactory;
+import com.chmihun.searchagent.databases.DBType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.ResourceBundle;
 
 /**
  * Created by Sergey.Chmihun on 06/27/2017.
  */
-public class GoogleSearch extends Agent implements Runnable {
+public class GoogleSearchAgent extends Agent implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(GoogleSearch.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(GoogleSearchAgent.class.getName());
     private String charset = "UTF-8";
     private String userAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
-    private static ResourceBundle res = ResourceBundle.getBundle("common");
-    private static GoogleSearch googleSearchServer;
+    private static GoogleSearchAgent googleSearchAgent;
 
-    private ArrayList<MySQLDB> databeses = new ArrayList<>();
     private ArrayList<String> listOfRequests = new ArrayList<>();
     //private ArrayList<String> whiteList;
     private int numberOfPages;
@@ -44,7 +35,6 @@ public class GoogleSearch extends Agent implements Runnable {
     private boolean isBannedByGoogle;
     //private WebDriver driver;
     //private WebDriverWait wait;
-    private String fileOutputNameXls;
 
     /**
      * For tests
@@ -53,27 +43,22 @@ public class GoogleSearch extends Agent implements Runnable {
         return listOfRequests;
     }
 
-    public static GoogleSearch getGoogleSearchServer() {
-        return googleSearchServer;
+    public static GoogleSearchAgent getGoogleSearchAgent() {
+        return googleSearchAgent;
     }
 
-    public static void setGoogleSearchServer(GoogleSearch googleSearchServer) {
-        GoogleSearch.googleSearchServer = googleSearchServer;
-    }
-
-    public String getFileOutputNameXls() {
-        return fileOutputNameXls;
+    public static void setGoogleSearchAgent(GoogleSearchAgent googleSearchAgent) {
+        GoogleSearchAgent.googleSearchAgent = googleSearchAgent;
     }
 
     /**
      * Replace usual exception handler with own on creation of object of class
      */
-    public GoogleSearch() {
+    public GoogleSearchAgent() {
         Thread.setDefaultUncaughtExceptionHandler(this::handleUncaughtException);
-        googleSearchServer = this;
-        logger.debug("Google search agent initialized [" + googleSearchServer + "]");
-        databeses.add(new Google());
-        databeses.add(new GoogleBackup());
+        googleSearchAgent = this;
+        DBFactory.createDBInstance(DBType.GOOGLE);
+        logger.debug("Google search agent initialized [" + googleSearchAgent + "]");
     }
 
     /**
@@ -252,9 +237,9 @@ public class GoogleSearch extends Agent implements Runnable {
             ArrayList<String> urls = checkMatchingRequest(link, request);
 
             if (urls != null) {
-                GoogleObj gObj = new GoogleObj(request, urls.get(0), urls.get(1), databeses.get(0));
-                databeses.get(0).insertDataToDB(gObj);
-                databeses.get(1).insertDataToDB(gObj);
+                GoogleObj gObj = new GoogleObj(request, urls.get(0), urls.get(1), DBFactory.getDatabaseInstance(DBType.GOOGLE));
+                DBFactory.getDatabaseInstance(DBType.GOOGLE).insertDataToDB(gObj);
+                DBFactory.getDatabaseInstance(DBType.GOOGLEBACKUP).insertDataToDB(gObj);
                 counterOfFoundRes++;
             }
         }
@@ -322,44 +307,4 @@ public class GoogleSearch extends Agent implements Runnable {
             driver.quit();
         }
     }*/
-
-    /**
-     * This method returns results for the requesting time period
-     **/
-    public boolean generateStatisticsForPeriod(String query, String startDate, String endDate, String webappPath) {
-        ArrayList<String> stat = ((Google) databeses.get(0)).getStatisticsForPeriod(query, startDate, endDate);
-
-        try {
-            if (stat.size() > 0) {
-                Date currentDate = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd_hh-mm-ss");
-                new File(webappPath + "\\statistics").mkdir();
-                fileOutputNameXls = webappPath + "\\statistics\\Results_" + format.format(currentDate) + ".xls";
-                File excelFile = new File(fileOutputNameXls);
-                WritableWorkbook workbook = Workbook.createWorkbook(excelFile);
-                WritableSheet sheet = workbook.createSheet(query, 0);
-
-                Label cell = null;
-                for (int i = 0; i < stat.size(); i++) {
-                    String[] arr = stat.get(i).split(", ");
-                    for (int j = 1; j < 6; j++) {
-                        if (i == 0) {
-                            WritableCellFormat cellFormat = new WritableCellFormat(new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD, true));
-                            cell = new Label(j, i + 1, res.getString("title.col" + j), cellFormat);
-                            sheet.addCell(cell);
-                        }
-                        cell = new Label(j, i + 2, arr[j - 1]);
-                        sheet.addCell(cell);
-                    }
-                }
-
-                workbook.write();
-                workbook.close();
-                return true;
-            } else throw new NullPointerException("Array of results is empty. ");
-        } catch (Exception e) {
-            logger.error("Something went wrong. ", e);
-            return false;
-        }
-    }
 }

@@ -19,7 +19,7 @@ public class AgentFactory {
 
         switch (agentType) {
             case GOOGLE:
-                newAgent = new GoogleSearch();
+                newAgent = new GoogleSearchAgent();
                 break;
             case MAILRU:
                 //TODO: add mailru agent instance

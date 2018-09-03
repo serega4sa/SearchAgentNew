@@ -2,7 +2,8 @@ package com.chmihun.searchagent;
 
 import com.chmihun.searchagent.agents.AgentFactory;
 import com.chmihun.searchagent.agents.AgentTypes;
-import com.chmihun.searchagent.agents.GoogleSearch;
+import com.chmihun.searchagent.agents.ExportController;
+import com.chmihun.searchagent.agents.GoogleSearchAgent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -23,7 +24,6 @@ import java.io.IOException;
 public class ActionHandlerServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(ActionHandlerServlet.class.getName());
-    private GoogleSearch gs;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         JSONParser parser = new JSONParser();
@@ -38,7 +38,7 @@ public class ActionHandlerServlet extends HttpServlet {
                 boolean isSuccessful = performAction(jsonObjectInput);
 
                 JSONObject jsonObjectOutput = new JSONObject();
-                jsonObjectOutput.put("result", isSuccessful ? 1 : 0);
+                jsonObjectOutput.put(Keys.Response.RESULT, isSuccessful ? 1 : 0);
 
                 response.setContentType("application/json");
                 response.getWriter().write(jsonObjectOutput.toString());
@@ -48,7 +48,7 @@ public class ActionHandlerServlet extends HttpServlet {
             logger.error("Problems with parsing json input. ", e);
         } catch (IOException e) {
             JSONObject jsonObjectOutput = new JSONObject();
-            jsonObjectOutput.put("result", 0);
+            jsonObjectOutput.put(Keys.Response.RESULT, 0);
             response.setContentType("application/json");
             response.getWriter().write(jsonObjectOutput.toString());
             logger.error("Outgoing json: " + jsonObjectOutput.toString() + ". Something went wrong: " + e);
@@ -56,26 +56,31 @@ public class ActionHandlerServlet extends HttpServlet {
     }
 
     private boolean performAction(JSONObject jsonObjectInput) {
-        String actionName = ((String) jsonObjectInput.get("action"));
-        if (actionName.equals("getGoogleSearchResults")) {
+        String actionName = ((String) jsonObjectInput.get(Keys.Response.ACTION));
+        if (actionName.equals(Keys.Response.GET_GOOGLE_SEARCH_RESULTS)) {
             generateGoogleSearchResults(jsonObjectInput);
             return true;
-        } else if (actionName.equals("getStatistics")) {
-            gs = (GoogleSearch) AgentFactory.getAgent(AgentTypes.GOOGLE);
+        } else if (actionName.equals(Keys.Response.GET_STATISTICS)) {
+            String query = jsonObjectInput.get(Keys.Response.QUERY).toString();
+            String startDate = jsonObjectInput.get(Keys.Response.START_DATE).toString();
+            String endDate = jsonObjectInput.get(Keys.Response.END_DATE).toString();
             String webappPath = getServletContext().getRealPath(File.separator);
-            return gs.generateStatisticsForPeriod(jsonObjectInput.get("query").toString(), jsonObjectInput.get("startDate").toString(), jsonObjectInput.get("endDate").toString(), webappPath);
+            return ExportController.generateStatisticsForPeriod(query, startDate, endDate, webappPath);
         }
         return false;
     }
 
     private void generateGoogleSearchResults(JSONObject jsonObjectInput) {
-        gs = (GoogleSearch) AgentFactory.getAgent(AgentTypes.GOOGLE);
+        GoogleSearchAgent gs = (GoogleSearchAgent) AgentFactory.getAgent(AgentTypes.GOOGLE);
         gs.getListOfRequests().clear();
-        gs.getListOfRequests().add(jsonObjectInput.get("query").toString());
-        gs.setvDuration(jsonObjectInput.get("vDuration").toString());
-        gs.setqDuration(jsonObjectInput.get("qDuration").toString());
-        gs.setLocalization(jsonObjectInput.get("localization").toString());
-        gs.setNumberOfPages(Integer.parseInt(jsonObjectInput.get("numOfPages").toString()));
+        String[] queryList = jsonObjectInput.get(Keys.Response.QUERY).toString().split(",");
+        for (String query : queryList) {
+            gs.getListOfRequests().add(query.trim());
+        }
+        gs.setvDuration(jsonObjectInput.get(Keys.Response.VDURATION).toString());
+        gs.setqDuration(jsonObjectInput.get(Keys.Response.QDURATION).toString());
+        gs.setLocalization(jsonObjectInput.get(Keys.Response.LOCALIZATION).toString());
+        gs.setNumberOfPages(Integer.parseInt(jsonObjectInput.get(Keys.Response.NUM_OF_PAGES).toString()));
         gs.run();
     }
 }

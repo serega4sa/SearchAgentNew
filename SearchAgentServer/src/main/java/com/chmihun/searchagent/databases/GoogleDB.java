@@ -10,18 +10,19 @@ import java.util.ArrayList;
 /**
  * Created by Sergey.Chmihun on 05/16/2017.
  */
-public class Google extends MySQLDB {
-    private static final Logger logger = LoggerFactory.getLogger(Google.class.getName());
+public class GoogleDB extends MySQLDB {
 
-    public Google() {
+    private static final Logger logger = LoggerFactory.getLogger(GoogleDB.class.getName());
+
+    public GoogleDB() {
         setDbTable(res.getString("dbTableGoogle"));
         setLastID(getIDOfLastEntry());
         init();
-        logger.debug("Google DB was created and initialized.");
+        logger.debug("GoogleDB was created and initialized.");
     }
 
     /** Just for tests */
-    public Google(String dbName, String dbTable, String dbURL) {
+    public GoogleDB(String dbName, String dbTable, String dbURL) {
         this.dbName = dbName;
         setDbTable(dbTable);
         this.dbURL = dbURL;

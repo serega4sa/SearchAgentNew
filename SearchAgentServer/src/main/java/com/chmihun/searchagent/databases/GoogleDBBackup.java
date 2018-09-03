@@ -11,13 +11,14 @@ import java.sql.Statement;
 /**
  * Created by Sergey.Chmihun on 07/06/2017.
  */
-public class GoogleBackup extends MySQLDB {
-    private static final Logger logger = LoggerFactory.getLogger(GoogleBackup.class.getName());
+public class GoogleDBBackup extends MySQLDB {
 
-    public GoogleBackup() {
+    private static final Logger logger = LoggerFactory.getLogger(GoogleDBBackup.class.getName());
+
+    public GoogleDBBackup() {
         setDbTable(res.getString("dbTableGoogleBackup"));
         init();
-        logger.debug("Google backup DB was created and initialized.");
+        logger.debug("GoogleDBBackup was created and initialized.");
     }
 
     public void createTable() {

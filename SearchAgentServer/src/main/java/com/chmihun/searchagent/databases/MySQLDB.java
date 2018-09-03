@@ -13,6 +13,7 @@ public abstract class MySQLDB {
 
     private static final Logger logger = LoggerFactory.getLogger(MySQLDB.class.getName());
     public static ResourceBundle res = ResourceBundle.getBundle("common_en");
+
     public String dbURL = res.getString("dbURL");
     public String dbName = res.getString("dbName");
     private String dbTable;
