@@ -5,7 +5,8 @@
 <head>
     <title>Search Agent</title>
     <script src="resources/googleSearch.js"></script>
-    <script src="resources/showStatistics.js"></script>
+    <script src="resources/statistics.js"></script>
+    <script src="resources/main.js"></script>
     <link rel="stylesheet" type="text/css" href="resources/style.css">
     <link rel="icon" href="images/spy_icon.png">
 </head>
@@ -27,7 +28,7 @@
     </a>
     <br/><br/>
     <a href="#">
-        <img src="images/statistics_logo.png" onclick="showStatistics()"/>
+        <img src="images/statistics_logo.png" onclick="showStatisticsPage()"/>
     </a>
 </div>
 <div id="content">
@@ -69,8 +70,8 @@
             <input id="numOfPages" type="text">
         </div>
         <div id="progressBar">
-            <button id="startBtn" class="button buttonStart" onclick="getGoogleSearchResults()">Start</button>
-            <div id="loader"></div>
+            <button id="startBtn" class="button buttonStart" onclick="Main.getGoogleSearchResults()">Start</button>
+            <div id="loadingCircle"></div>
         </div>
     </div>
 </div>

@@ -11,7 +11,8 @@
 <head>
     <title>Search Agent</title>
     <script src="resources/googleSearch.js"></script>
-    <script src="resources/showStatistics.js"></script>
+    <script src="resources/statistics.js"></script>
+    <script src="resources/main.js"></script>
     <link rel="stylesheet" type="text/css" href="resources/style.css">
     <link rel="stylesheet" type="text/css" href="resources/calendar/bootstrap-combined.min.css">
     <link rel="stylesheet" type="text/css" href="resources/calendar/bootstrap-datetimepicker.min.css">
@@ -76,8 +77,8 @@
             <p id="statisticsPath"><%= getTomcatPath(request.getContextPath()) %></p>
         </div>
         <div id="progressBar">
-            <button id="startBtn" class="button buttonStart" onclick="getStatistics()">Get</button>
-            <div id="loader"></div>
+            <button id="startBtn" class="button buttonStart" onclick="Main.getStatistics()">Start</button>
+            <div id="loadingCircle"></div>
         </div>
     </div>
 </div>

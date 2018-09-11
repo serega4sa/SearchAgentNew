@@ -78,7 +78,7 @@ img:hover {
     width: 49%;
 }
 
-#loader {
+#loadingCircle {
     position: fixed;
     bottom: 39px;
     right: 54px;
