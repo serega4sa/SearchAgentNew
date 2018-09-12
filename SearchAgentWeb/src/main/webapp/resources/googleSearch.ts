@@ -26,10 +26,18 @@ class GSResults {
 
     /**
      * Checks whether parameters aren't empty
-     * @return {boolean} - true if all fields are filled, otherwise false
+     * @return {boolean} - true if any field is empty, otherwise false
      */
-    private isParamsNotEmpty(): boolean {
-        return this.query.value.length > 0 && this.numOfPages.value.length > 0;
+    private isParamsEmpty(): boolean {
+        return this.query.value.length == 0 || this.numOfPages.value.length == 0;
+    }
+
+    /**
+     * Checks whether number of pages parameter is numeric
+     * @return {boolean} - true if numeric, otherwise false
+     */
+    private isCorrectNumberOfPages(): boolean {
+        return isNaN(Number(this.numOfPages.value));
     }
 
     private changeBtnState(eventType: EventType, success?: boolean): void {
@@ -41,7 +49,11 @@ class GSResults {
      * */
     public getGoogleSearchResults(): void {
         this.initPageElements();
-        if (this.isParamsNotEmpty()) {
+
+        let isEmpty: boolean = this.isParamsEmpty();
+        let isCorrectData: boolean = this.isCorrectNumberOfPages();
+
+        if (!isEmpty && isCorrectData) {
             let xhr = AppCommon.createRequest();
             let data = JSON.stringify({
                 "action": "getGoogleSearchResults",
@@ -70,7 +82,13 @@ class GSResults {
             // Searching in progress indication
             this.changeBtnState(EventType.START);
         } else {
-            window.alert("Please fill all data");
+            let warningMessage: string;
+            if (isEmpty && !isCorrectData) {
+                warningMessage = "Please specify query and correct number of pages";
+            } else {
+                warningMessage = isEmpty ? "Please fill all fields" : "Please specify correct number of pages";
+            }
+            window.alert(warningMessage);
         }
     }
 

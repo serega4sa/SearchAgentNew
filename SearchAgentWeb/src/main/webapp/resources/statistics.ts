@@ -27,10 +27,10 @@ class Statistics {
 
     /**
      * Checks whether parameters aren't empty
-     * @return {boolean} - true if all field are filled, otherwise false
+     * @return {boolean} - true if any field is empty, otherwise false
      */
-    private isParamsNotEmpty(): boolean {
-        return this.query.value.length > 0 && this.startDate.value.length > 0 && this.endDate.value.length > 0;
+    private isParamsEmpty(): boolean {
+        return this.query.value.length == 0 || this.startDate.value.length == 0 || this.endDate.value.length == 0;
     }
 
     /**
@@ -54,7 +54,7 @@ class Statistics {
         this.initPageElements();
         let agent = this.agentType.options[this.agentType.selectedIndex].value;
 
-        let isEmpty: boolean = this.isParamsNotEmpty();
+        let isEmpty: boolean = this.isParamsEmpty();
         let isCorrect: boolean = this.isCorrectDates();
 
         if (!isEmpty && isCorrect) {
