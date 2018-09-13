@@ -1,6 +1,3 @@
-import EventType = Main.EventType;
-import AppCommon = Main.Common;
-
 class GSResults {
 
     private timeoutBeforeReset = 3000;
@@ -37,11 +34,11 @@ class GSResults {
      * @return {boolean} - true if numeric, otherwise false
      */
     private isCorrectNumberOfPages(): boolean {
-        return isNaN(Number(this.numOfPages.value));
+        return !isNaN(Number(this.numOfPages.value));
     }
 
-    private changeBtnState(eventType: EventType, success?: boolean): void {
-        AppCommon.changeBtnState(eventType, this.startBtn, this.loadingCircle, success);
+    private changeBtnState(eventType: Main.EventType, success?: boolean): void {
+        Main.Common.changeBtnState(eventType, this.startBtn, this.loadingCircle, success);
     }
 
     /**
@@ -54,7 +51,7 @@ class GSResults {
         let isCorrectData: boolean = this.isCorrectNumberOfPages();
 
         if (!isEmpty && isCorrectData) {
-            let xhr = AppCommon.createRequest();
+            let xhr = Main.Common.createRequest();
             let data = JSON.stringify({
                 "action": "getGoogleSearchResults",
                 "query": this.query.value,
@@ -68,7 +65,7 @@ class GSResults {
                 if (xhr.readyState == 4) {
                     let response = JSON.parse(xhr.responseText);
                     let isSuccessful: boolean = response.result.toString() == 1;
-                    this.changeBtnState(EventType.RESPONSE, isSuccessful);
+                    this.changeBtnState(Main.EventType.RESPONSE, isSuccessful);
                     if (isSuccessful) {
                         setTimeout(() => {
                             this.clearToDefaultState();
@@ -80,7 +77,7 @@ class GSResults {
             xhr.send(data);
 
             // Searching in progress indication
-            this.changeBtnState(EventType.START);
+            this.changeBtnState(Main.EventType.START);
         } else {
             let warningMessage: string;
             if (isEmpty && !isCorrectData) {
@@ -93,7 +90,7 @@ class GSResults {
     }
 
     private clearToDefaultState(): void {
-        this.changeBtnState(EventType.END);
+        this.changeBtnState(Main.EventType.END);
 
         // Reset all fields
         this.query.value = "";
